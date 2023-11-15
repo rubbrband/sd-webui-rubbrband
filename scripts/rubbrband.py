@@ -3,7 +3,7 @@ import gradio as gr
 from modules.processing import Processed
 import requests
 import uuid
-import BytesIO
+from io import BytesIO
 import base64
 
 class Script(scripts.Script):
