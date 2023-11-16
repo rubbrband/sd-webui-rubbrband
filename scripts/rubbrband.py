@@ -1,6 +1,8 @@
 import modules.scripts as scripts
 import gradio as gr
 from modules.processing import Processed
+from modules import shared, script_callbacks
+from modules.shared import opts
 import requests
 import uuid
 from io import BytesIO
@@ -13,10 +15,8 @@ class Script(scripts.Script):
     def show(self, is_img2img):
         return scripts.AlwaysVisible
 
-    def ui(self, is_img2img):
-        api_key = gr.Textbox(value="", label="Rubbrband API Key")
-        return [api_key]
-    def postprocess(self, p, processed: Processed, rubbrband_api_key):
+    def postprocess(self, p, processed: Processed):
+        rubbrband_api_key = opts.rubbrband_api_key
         for image in processed.images:
             image_id = str(uuid.uuid4())
         # Convert PIL image to bytes
@@ -46,3 +46,9 @@ class Script(scripts.Script):
                 json=image_json_data,
             )
         return p
+    
+def on_ui_settings():
+    section = ('rubbrband', "rubbrband client settings")
+    shared.opts.add_option("rubbrband_api_key", shared.OptionInfo("", "Rubbrband api key", section=section))
+
+script_callbacks.on_ui_settings(on_ui_settings)
